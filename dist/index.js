@@ -1344,16 +1344,24 @@ define("@scom/scom-storage/components/preview.tsx", ["require", "exports", "@ijs
             return moduleData;
         }
         appendLabel(text) {
-            const label = (this.$render("i-label", { width: '100%', overflowWrap: 'anywhere', lineHeight: 1.2, display: 'block', maxHeight: '100%', font: { size: '0.875rem' } }));
-            const hrefRegex = /https?:\/\/\S+/g;
-            text = text
-                .replace(/\n/gm, ' <br> ')
-                .replace(/\s/g, '&nbsp;')
-                .replace(hrefRegex, (match) => {
-                return ` <a href="${match}" target="_blank">${match}</a> `;
-            });
-            label.caption = text;
-            this.previewer.appendChild(label);
+            const vstack = this.$render("i-vstack", { gap: "0.5rem" });
+            const items = text.split('\n');
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const spaces = item.match(/^\s+/);
+                const spacesCount = spaces ? spaces[0].length : 0;
+                const label = (this.$render("i-label", { width: '100%', overflowWrap: 'anywhere', lineHeight: 1.2, display: 'block', maxHeight: '100%', padding: { left: `${spacesCount / 4}rem` }, font: { size: '0.875rem' } }));
+                label.caption = item;
+                vstack.appendChild(label);
+            }
+            this.previewer.appendChild(vstack);
+            // const hrefRegex = /https?:\/\/\S+/g
+            // text = text
+            //   .replace(/\n/gm, ' <br> ')
+            //   .replace(/\s/g, '&nbsp;')
+            //   .replace(hrefRegex, (match) => {
+            //     return ` <a href="${match}" target="_blank">${match}</a> `
+            //   })
         }
         renderFilePreview() {
             const wrapper = this.$render("i-panel", { width: '100%' },

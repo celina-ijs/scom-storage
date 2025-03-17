@@ -256,25 +256,35 @@ export class ScomIPFSPreview extends Module implements IFileHandler {
   }
 
   private appendLabel(text: string) {
-    const label = (
-      <i-label
-        width={'100%'}
-        overflowWrap='anywhere'
-        lineHeight={1.2}
-        display='block'
-        maxHeight={'100%'}
-        font={{ size: '0.875rem' }}
-      ></i-label>
-    ) as Label
-    const hrefRegex = /https?:\/\/\S+/g
-    text = text
-      .replace(/\n/gm, ' <br> ')
-      .replace(/\s/g, '&nbsp;')
-      .replace(hrefRegex, (match) => {
-        return ` <a href="${match}" target="_blank">${match}</a> `
-      })
-    label.caption = text
-    this.previewer.appendChild(label)
+    const vstack = <i-vstack gap="0.5rem"></i-vstack>
+    const items = text.split('\n')
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const spaces = item.match(/^\s+/);
+      const spacesCount = spaces ? spaces[0].length : 0;
+
+      const label = (
+        <i-label
+          width={'100%'}
+          overflowWrap='anywhere'
+          lineHeight={1.2}
+          display='block'
+          maxHeight={'100%'}
+          padding={{ left: `${spacesCount/4}rem` }}
+          font={{ size: '0.875rem' }}
+        ></i-label>
+      ) as Label
+      label.caption = item
+      vstack.appendChild(label)
+    }
+    this.previewer.appendChild(vstack)
+    // const hrefRegex = /https?:\/\/\S+/g
+    // text = text
+    //   .replace(/\n/gm, ' <br> ')
+    //   .replace(/\s/g, '&nbsp;')
+    //   .replace(hrefRegex, (match) => {
+    //     return ` <a href="${match}" target="_blank">${match}</a> `
+    //   })
   }
 
   private renderFilePreview() {
